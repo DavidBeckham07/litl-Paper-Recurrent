@@ -284,3 +284,106 @@ time ./libalockepfl_original.sh ./myprogram0
 
 同样也相差了2s多，在这个测试中，左边锁完胜!
 
+### 使用论文中的程序测试锁
+
+#### jemaloc
+
+根据文档的信息，可以通过./autogen.sh调用，因此，我们直接尝试使用`./autogen.sh`
+
+![image-20201123112619714](./image-20201123112619714.png)
+
+发现报错了，找不到autoconf这个包
+
+![image-20201123112715504](./image-20201123112715504.png)
+
+autoconf是一个包，我们可以使用aptget安装
+
+```shell
+sudo apt-get install autoconf
+```
+
+![image-20201123112835093](./image-20201123112835093.png)
+
+完成之后重复一下,就没有报错了，正常安装！
+
+```shell
+./autogen.sh
+```
+
+![image-20201123112915107](./image-20201123112915107.png)
+
+成功之后会输出一些安装信息
+
+![image-20201123112948023](./image-20201123112948023.png)
+
+继续按照文档给出的安装方式.
+
+```shell
+make dist
+make 
+sudo make install
+```
+
+
+
+安装完成之后，应该就可以调用run_tests.sh了
+
+```shell
+./run_tests.sh
+```
+
+发现报错了：
+
+![image-20201123111405490](./image-20201123111405490.png)
+
+这里报错的是一个python脚本，而且是print方法使用错误，因为我的电脑默认环境是py3.7环境，print加冒号是py2.7的语法。这时候，一个合理的猜测就是应该要修改python环境。
+
+这里我用anaconda管理环境，anaconda的安装可以看另外一篇文档。
+
+下面这个命令创建了一个python2.7环境，并且命名为py27
+
+```shell
+conda create -n py27 python=2.7
+```
+
+![image-20201123111541982](./image-20201123111541982.png)
+
+切换到py27环境，然后再次调用刚刚那个脚本run_tests.sh。
+
+![image-20201123113122755](./image-20201123113122755.png)
+
+还是报错了
+
+![image-20201123124224280](./image-20201123124224280.png)
+
+在run_test.out中，发现是一个expected变量声明了，没有使用，加上`cc1plus: warnings being treated as errors`,把warning当作error。因此报错了。
+
+对此，我查找资料，发现和-Werror这个编译选项有关系，所以，我直接更改gcc的编译选项。
+
+首先看一下run_tests.sh做了什么：
+
+![image-20201123124539327](./image-20201123124539327.png)
+
+原来它间接调用了另外的脚本，打开scripts下的gen_run_tests.py文件，找到config_line这一行。
+
+![image-20201123124637684](./image-20201123124637684.png)
+
+将原来的编译选项注释掉，改成空白字符。
+
+```shell
+                config_line = (
+                    # 'EXTRA_CFLAGS=-Werror EXTRA_CXXFLAGS=-Werror '
+			''
+                    + 'CC="{} {}" '.format(cc, " ".join(compiler_opts))
+                    + 'CXX="{} {}" '.format(cxx, " ".join(compiler_opts))
+                    + '../../configure '
+                    + " ".join(config_opts) + (' --with-malloc-conf=' +
+                    ",".join(malloc_conf_opts) if len(malloc_conf_opts) > 0
+                    else '')
+```
+
+再次运行，不报错啦。
+
+![image-20201123124751573](./image-20201123124751573.png)
+
+先慢慢等结果吧。
