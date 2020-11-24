@@ -368,7 +368,11 @@ time ./libclhepfl_original.sh ./jemallocTest #使用LITIL中clhepfl锁运行
 
 其实，在jemalloc中也有自带测试用例，我们也可以使用jemalloc项目文件中自带的项目进行测试。
 
-首先，shfllock的jemalloc是修过修改的的，需要自行到jemalloc的[github地址](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)下clone过来，然后重复上述安装的过程。
+---------------
+
+**注意**：**shfllock的jemalloc是修过修改的的，需要自行到jemalloc的[github地址](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)下clone过来，然后重复上述安装的过程。**
+
+
 
 ```shell
 ./autogen.sh
@@ -389,7 +393,7 @@ sudo make install
 
 这里报错的是一个python脚本，而且是print方法使用错误，因为我的电脑默认环境是py3.7环境，print加冒号是py2.7的语法。这时候，一个合理的猜测就是应该要修改python环境。
 
-这里我用anaconda管理环境，anaconda的安装可以看另外一篇文档。
+这里我用anaconda管理环境，anaconda的安装可以看[另外一篇文档](https://github.com/DavidBeckham07/litl-Paper-Recurrent/blob/master/anaconda%E9%83%A8%E5%88%86%E6%96%87%E6%A1%A3.pdf)。
 
 下面这个命令创建了一个python2.7环境，并且命名为py27
 
@@ -437,13 +441,11 @@ conda create -n py27 python=2.7
 
 ![image-20201123124751573](./image-20201123124751573.png)
 
-先慢慢等结果是可以跑出来的，但是要怎么使用LITL的锁呢，我的思路是将可执行文件生成之后单独拿出来测试。LD_PRELOAD=$LD_PROLOAD:/home/yang/bak/shfllock-master/ulocks/src/litl/lib/libalockepfl_original.so
+先慢慢等结果是可以跑出来的，但是要怎么使用LITL的锁呢，我的思路是将可执行文件生成之后单独拿出来测试。
 
 为了拿到我们想要的可执行文件，我们需要做一点处理：
 
-在sricpts目录下的gen_run_tests.py文件中，注释掉check 和 disclean两行句话，check命令会测试生成的文件、distclean命令会将生成的文件全部删除。
-
-而下面的print本来会运行多个sh脚本，我们这里简单修改，让他只运行一个`run_test_2/sh`。
+在sricpts目录下的gen_run_tests.py文件中，注释掉check 和 disclean两行句话。因为check命令会测试生成的文件、distclean命令会将生成的文件全部删除；而下面的print本来会运行多个sh脚本，我们这里简单修改，让他只运行一个`run_test_2/sh`。
 
 ![image-20201124083826284](./image-20201124083826284.png)
 
@@ -456,7 +458,7 @@ sudo ./run.run_tests.py
 
 ![image-20201124084112076](./image-20201124084112076.png)
 
-调用完成之后，进入`run_tests.out/run_test_0.out/test/stress`,在这里可以看到生成的可执行文件。
+调用完成之后，进入`run_tests.out/run_test_2.out/test/stress`,在这里可以看到生成的可执行文件。
 
 ![image-20201124084215677](./image-20201124084215677.png)
 
