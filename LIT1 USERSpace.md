@@ -497,28 +497,3 @@ rc/litl/libalockepfl_original.sh ./large_microbench
 
 这里同样也可以验证在这个测试用例中，linux自带的锁要快1s左右。
 
-## afl测试
-
-### 安装llvm、clang依赖包
-
-```shell
-sudo apt-get install llvm
-```
-
-![image-20201124104359123](D:\学习\Linux\课程\论文\image-20201124104359123.png)
-
-```shell
-sudo apt-get install clang
-```
-
-![image-20201124104537290](D:\学习\Linux\课程\论文\image-20201124104537290.png)
-
-### 编译afl程序
-
-根据文档，
-
-```shell
-make -C afl
-```
-
-![image-20201124104810781](D:\学习\Linux\课程\论文\image-20201124104810781.png)
