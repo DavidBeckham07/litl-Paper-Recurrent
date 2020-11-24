@@ -177,7 +177,7 @@ for(i = 0; i < NUM; i++)
 gcc -g LockExper.c -o LockExper -lpthread
 ```
 
-![image-20201124164732546](D:\学习\Linux\课程\论文\image-20201124164732546.png)
+![image-20201124164732546](./image-20201124164732546.png)
 
 ### 运行比较各种锁
 
@@ -189,7 +189,7 @@ gcc -g LockExper.c -o LockExper -lpthread
 time ./LockExper 8 60 # 8个线程 60%冲突概率
 ```
 
-![image-20201124164805663](D:\学习\Linux\课程\论文\image-20201124164805663.png)
+![image-20201124164805663](./image-20201124164805663.png)
 
 大概是1.67s
 
@@ -203,6 +203,6 @@ time ./libspinlockepfl_original.sh ./LockExper
 
 结果让人非常吃惊，竟然达到了55s
 
-![image-20201124165205811](D:\学习\Linux\课程\论文\image-20201124165205811.png)
+![image-20201124165205811](./image-20201124165205811.png)
 
 由此可见，不同的锁影响还是特别大的。把shell脚本换成别的锁，就可以测试别的了。
