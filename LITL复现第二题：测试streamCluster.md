@@ -2,7 +2,7 @@
 
 ### 构建parsec-3.0/streamCluster
 
-参考[网站](https://parsec.cs.princeton.edu/parsec3-doc.htm)上的文档，到[这个网页](http://parsec.cs.princeton.edu/download/3.0/parsec-3.0-core.tar.gz)下载core文档，也可以直接在[这个Github地址上](git remote add origin https://github.com/DavidBeckham07/litl-materials.git)下载。
+参考[网站](https://parsec.cs.princeton.edu/parsec3-doc.htm)上的文档，到[这个网页](http://parsec.cs.princeton.edu/download/3.0/parsec-3.0-core.tar.gz)下载core文档，也可以直接在[这个Github地址上](https://github.com/DavidBeckham07/litl-materials.git)下载。
 
 将`parsec-3.0-core.tar.gz`文件复制到`benchmards/parsec`目录下，再进行解压，进入解压后的文件，命令如下：
 
