@@ -477,7 +477,7 @@ sudo ./run.run_tests.py
 如图，第一行就证明了我们成功测试了LITL中的锁，现在我们要测试LITL中的锁和linux自带的锁性能差距，可以使用time命令，分别调用
 
 ```shell
-time ./libalockepfl_original.sh ./large_microbench  # 使用LITL中lockepfl锁的时间,使用默认的核和冲突率
+time ./libalockepfl_original.sh ./large_microbench  # 使用LITL中lockepfl锁的时间
 time ./large_microbench
 ```
 
@@ -490,10 +490,10 @@ time ./large_microbench
 ```shell
 time /home/yang/bak/shfllock-master/ulocks/s
 rc/litl/libalockepfl_original.sh ./large_microbench
-# 把全路径名改成你的对应位置，使用默认的核数和冲突率。
+# 把全路径名改成你的对应位置。
 ```
 
 ![image-20201124090200695](./image-20201124090200695.png)
 
-这里同样也可以验证在这个测试用例中，linux自带的锁要快1s左右。
+这里同样也可以验证，在这个测试用例中，linux自带的锁要快1s左右。
 
