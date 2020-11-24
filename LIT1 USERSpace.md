@@ -1,76 +1,17 @@
-### LIT1 User Space安装
+## LIT1 User Space安装
 
 ### 编译部分
 
-进入`ulocks/src/litl/`目录。
-
-使用`make -C`命令编译，报错：找不到-lpapi：
-
-```shell
-/usr/bin/ld: cannot find -lpapi
-collect2: error: ld returned 1 exit status
-Makefile:22: recipe for target '../lib/libmcs_spinlock.so' failed
-make[1]: *** [../lib/libmcs_spinlock.so] Error 1
-make[1]: Leaving directory '/home/yang/shflok/shfllock-master/ulocks/src/litl/src'
-Makefile:25: recipe for target 'libmcs_spinlock.so' failed
-make: *** [libmcs_spinlock.so] Error 2
-make: Leaving directory '/home/yang/shflok/shfllock-master/ulocks/src/litl'
-
-```
-
-![image-20201121111648050](./image-20201121111648050.png)
-
-查阅资料得知，papi库是一个用于测试性能的工具，我们需要先安装papi工具，使用sudo apt安装命令如下：
+首先要安装papi，如果在之前有编译过的，应该要将原来的删掉，安装papi之后再编译
 
 ```shell
 sudo apt-get update
 sudo apt-get install libpapi-dev
 ```
 
-安装成功后再次cmake，可以看到上一次的错误果然不见了，换了另外的**error**:
+进入`ulocks/src/litl/`目录。
 
-![image-20201121121418636](./image-20201121121418636.png)
-
-```shell
-../include/htlockepfl.h:72:25: error: flexible array member not at end of struct
-     ticket_lock_local_t local[NUMA_NODES];
-                         ^
-Makefile:12: recipe for target '../obj/htlockepfl_original/interpose.o' failed
-make[1]: *** [../obj/htlockepfl_original/interpose.o] Error 1
-make[1]: Leaving directory '/home/yang/shflok/shfllock-master/ulocks/src/litl/src'
-Makefile:25: recipe for target 'libhtlockepfl_original.so' failed
-make: *** [libhtlockepfl_original.so] Error 2
-```
-
-这个柔性数组不再结构体的最后面？一个直接的想法就是进去把这个数组移到最后面不就行了？说干就干，在当前目录下的/include找到那个文件，把数组改到最后一行：
-
-![image-20201121122530860](./image-20201121122530860.png)
-
-重新make一下，发现原来的错误解决了，又来了新的错误：
-
-![image-20201121122609409](./image-20201121122609409.png)
-
-出现`NUMA_NODES`的地方都出错了，说明这个变量可能没有定义。emmmm，那就我帮他定义一下吧，我又进去代码里面，帮作者定义了一个`NUMA_NODES`
-
-![image-20201121124038188](./image-20201121124038188.png)
-
-这下再来make一次，果然又报错了，报错的地方又是`NUMA_NODES`,这个变量redefined了。好家伙，这个变量到底定义了没有呀，前面又说找不到，现在又说重复定义。
-
-![image-20201121124153172](./image-20201121124153172.png)
-
-仔细看报错信息，发现在/include/topologh.y的第27行已经定义过了，于是，我就进去看看，到底是怎么回事。
-
-![image-20201121124317698](./image-20201121124317698.png)
-
-一看，原来如此，NUMA_NODES被定义为空串，这怎么能行呢，怪不得一直报错，我这里就自作主张，给他定义为2。当然，之前在htlockepfl.h中自己添加的NUMA_NODES就要删掉了。
-
-![image-20201121124523496](./image-20201121124523496.png)
-
-![image-20201121124415134](./image-20201121124415134.png)
-
-再来make一次，嘻嘻，终于成功啦。
-
-![image-20201121124559086](./image-20201121124559086.png)
+使用`make -C .`命令编译，因该
 
 这些新生成的sh文件，应该就是编译的结果吧。
 
@@ -282,13 +223,13 @@ time ./libalockepfl_original.sh ./myprogram0
 
 ![image-20201121133236860](./image-20201121133236860.png)
 
-同样也相差了2s多，在这个测试中，左边锁完胜!
+同样也相差了2s多，在这个测试中，左边锁完胜
 
-### 使用论文中的程序测试锁
+## 使用论文中的程序测试锁
 
-#### jemaloc
+#### jemaloc安装
 
-根据文档的信息，可以通过./autogen.sh调用，因此，我们直接尝试使用`./autogen.sh`
+clone之后解压，进入`jemalloc-dev`中,根据文档的信息，可以通过./autogen.sh调用，因此，我们直接尝试使用`./autogen.sh`
 
 ![image-20201123112619714](./image-20201123112619714.png)
 
@@ -324,9 +265,119 @@ make
 sudo make install
 ```
 
+#### jemalloc自定义测试用例
+
+安装完成之后，我们可以自己写一个测试程序，
+
+测试jemalloc分配效率。
+
+创建一个test0.c文件，内容如下：
+
+```shell
+#include <stdio.h>
+#include <jemalloc/jemalloc.h>
+#include <pthread.h>
+
+#define MAX_TIMES 100000000
 
 
-安装完成之后，应该就可以调用run_tests.sh了
+pthread_mutex_t thread_mutex;
+
+int global_val = 0;
+void *thread1(void *arg){
+
+while(global_val < MAX_TIMES){
+
+        malloc(10000000);
+
+
+}
+
+return NULL;
+
+}
+
+void *thread2(void *arg){
+
+while(global_val < MAX_TIMES){
+
+        malloc(10000000);
+
+
+}
+
+return NULL;
+
+}
+
+
+void *thread3(void *arg){
+
+while(global_val < MAX_TIMES){
+pthread_mutex_lock(&thread_mutex);
+
+
+        global_val = global_val + 1;
+
+
+
+
+
+pthread_mutex_unlock(&thread_mutex);
+}
+
+return NULL;
+
+}
+
+int main(void){
+
+pthread_t thread_id1 = 0, thread_id2 = 0, thread_id3=0;
+
+pthread_mutex_init(&thread_mutex, NULL);
+
+pthread_create(&thread_id1, NULL, thread1, NULL);
+pthread_create(&thread_id3, NULL, thread3, NULL);
+pthread_create(&thread_id2, NULL, thread2, NULL);
+
+pthread_join(thread_id1, NULL);
+pthread_join(thread_id3, NULL);
+pthread_join(thread_id2, NULL);
+
+
+return 0;
+
+}
+```
+
+调用gcc命令编译链接，并测试运行：
+
+```shell
+gcc test0.c -o jemallocTest -lpthread -ljemalloc # 编译生成
+time ./jemallocTest #使用默认锁运行
+time ./libclhepfl_original.sh ./jemallocTest #使用LITIL中clhepfl锁运行
+```
+
+效果如下：
+
+![image-20201124091641748](D:\学习\Linux\课程\论文\image-20201124091641748.png)
+
+在当前程序中，使用libclhepfl的效率比系统自带的锁慢3s。
+
+#### jemalloc自带的测试用例
+
+其实，在jemalloc中也有自带测试用例，我们也可以使用jemalloc项目文件中自带的项目进行测试。
+
+首先，shfllock的jemalloc是修过修改的的，需要自行到jemalloc的[github地址](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)下clone过来，然后重复上述安装的过程。
+
+```shell
+./autogen.sh
+make dist
+sudo make
+sudo make install 
+```
+
+进入jemalloc的工程目录下，调用run_tests.sh了。
 
 ```shell
 ./run_tests.sh
@@ -386,4 +437,66 @@ conda create -n py27 python=2.7
 
 ![image-20201123124751573](./image-20201123124751573.png)
 
-先慢慢等结果吧。
+先慢慢等结果是可以跑出来的，但是要怎么使用LITL的锁呢，我的思路是将可执行文件生成之后单独拿出来测试。LD_PRELOAD=$LD_PROLOAD:/home/yang/bak/shfllock-master/ulocks/src/litl/lib/libalockepfl_original.so
+
+为了拿到我们想要的可执行文件，我们需要做一点处理：
+
+在sricpts目录下的gen_run_tests.py文件中，注释掉check 和 disclean两行句话，check命令会测试生成的文件、distclean命令会将生成的文件全部删除。
+
+而下面的print本来会运行多个sh脚本，我们这里简单修改，让他只运行一个`run_test_2/sh`。
+
+![image-20201124083826284](D:\学习\Linux\课程\论文\image-20201124083826284.png)
+
+接着，重新回到上一层目录，调用`sudo ./run_tests.py`，记得要切换到py2.7环境下，如下：
+
+```shell
+conda activate py27
+sudo ./run.run_tests.py
+```
+
+![image-20201124084112076](D:\学习\Linux\课程\论文\image-20201124084112076.png)
+
+调用完成之后，进入`run_tests.out/run_test_0.out/test/stress`,在这里可以看到生成的可执行文件。
+
+![image-20201124084215677](D:\学习\Linux\课程\论文\image-20201124084215677.png)
+
+我们可以尝试运行一个，在当前目录下，命令行输入`./large_microbench`
+
+![image-20201124084337932](D:\学习\Linux\课程\论文\image-20201124084337932.png)
+
+
+
+有了可执行文件，我们要怎么测试锁呢，一种方法是把可执行文件拷贝到litl目录下，然后在litil的目录下调用
+
+```shell
+./libalockepfl_original.sh ./large_microbench 
+```
+
+![image-20201124085141741](D:\学习\Linux\课程\论文\image-20201124085141741.png)
+
+如图，第一行就证明了我们成功测试了LITL中的锁，现在我们要测试LITL中的锁和linux自带的锁性能差距，可以使用time命令，分别调用
+
+```shell
+time ./libalockepfl_original.sh ./large_microbench  # 使用LITL中lockepfl锁的时间,使用默认的核和冲突率
+time ./large_microbench
+```
+
+![image-20201124085903153](D:\学习\Linux\课程\论文\image-20201124085903153.png)
+
+从上图中可以看出，在这个测试用例中，Linux自带的锁速度要快1s左右。
+
+如果不想拷贝，可以直接在test/stress目录下，使用锁执行文件的全路径，原理和效果其实都是一样，我们测试可以使用下面一种方法。
+
+```shell
+time /home/yang/bak/shfllock-master/ulocks/s
+rc/litl/libalockepfl_original.sh ./large_microbench
+# 把全路径名改成你的对应位置，使用默认的核数和冲突率。
+```
+
+![image-20201124090200695](D:\学习\Linux\课程\论文\image-20201124090200695.png)
+
+这里同样也可以验证在这个测试用例中，linux自带的锁要快1s左右。
+
+对同一个锁，也可以使用不同的核数、冲突率进行测试。
+
+![image-20201124092602810](D:\学习\Linux\课程\论文\image-20201124092602810.png)
