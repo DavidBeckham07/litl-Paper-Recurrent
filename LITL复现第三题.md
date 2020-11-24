@@ -1,6 +1,6 @@
 ### 代码
 
-在litl新建一个LockExper.c文件，代码（初版）如下：
+在litl目录下新建一个LockExper.c文件，代码（初版）如下：
 
 ```c
 #include <stdio.h>
