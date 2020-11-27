@@ -40,7 +40,7 @@ sudo apt-get install libpapi-dev
 #### gettid问题
 ![Xnip2020-11-27_10-14-04](LITL复现第二题：安装userSpace锁程序.assets/Xnip2020-11-27_10-14-04.png)
 
-##### 	解决方法一：
+##### 	解决方法：
 
 ​		给LiTL的gittid函数重命名
 
