@@ -29,7 +29,7 @@ sudo apt-get install libpapi-dev
 
 #### gettid问题
 
-[gettid解决方法](./linux的坑)
+[gettid解决方法](https://github.com/DavidBeckham07/litl-Paper-Recurrent/blob/master/%E8%A1%A5%E5%85%85%20gettid%E9%97%AE%E9%A2%98.md)
 
 
 
