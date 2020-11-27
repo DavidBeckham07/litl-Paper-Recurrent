@@ -17,15 +17,25 @@ sudo apt-get install libpapi-dev
 
 ![image-20201121124703487](./image-20201121124703487.png)
 
-#### NAMA_NODES问题：
+#### NUMA_NODES问题：
 
 有些时候会出现NUMA_NODES有关的问题，比如说找不到这个符号，或者是除0异常.
 
 ![image-20201127113345948](./image-20201127113345948.png)
 
-那么很有可能是因为NUMA_NODES的设置问题。这是因为默认定义中，把NUMA_NODES定义成了空，可以在`include/htlockepfl.h`中，修改这个定义，如下：
+那么很有可能是因为NUMA_NODES的设置问题。
 
-![image-20201121124415134](./image-20201121124415134-1606444591993.png)
+经查找，在`htlockepfl.h`中定义了这个变量。默认定义中，把NUMA_NODES定义成了空，可以在`include/topology.h`中，修改这个定义，如下：
+
+（修改前）
+
+![image-20201127121210221](LITL复现第二题：安装userSpace锁程序.assets/image-20201127121210221.png)
+
+（修改后）
+
+![image-20201127121308543](LITL复现第二题：安装userSpace锁程序.assets/image-20201127121308543.png)
+
+
 
 #### gettid问题
 ![Xnip2020-11-27_10-14-04](LITL复现第二题：安装userSpace锁程序.assets/Xnip2020-11-27_10-14-04.png)
@@ -40,7 +50,7 @@ sudo apt-get install libpapi-dev
 
 ![image-20201127103014213](LITL复现第二题：安装userSpace锁程序.assets/image-20201127103014213.png)
 
-修改之后：
+​		修改之后：
 
 ![image-20201127103254862](LITL复现第二题：安装userSpace锁程序.assets/image-20201127103254862.png)
 =======
