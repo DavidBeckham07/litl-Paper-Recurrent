@@ -25,7 +25,7 @@ sudo apt-get install libpapi-dev
 
 那么很有可能是因为NUMA_NODES的设置问题。
 
-经查找，在`htlockepfl.h`中定义了这个变量。默认定义中，把NUMA_NODES定义成了空，可以在`include/topology.h`中，修改这个定义，如下：
+但在`htlockepfl.h`文件中，没有该变量定义。经查找，在`topology.h`中定义了这个变量。默认定义中，把NUMA_NODES定义成了空，可以在`include/topology.h`中，修改这个定义，如下：
 
 （修改前）
 
