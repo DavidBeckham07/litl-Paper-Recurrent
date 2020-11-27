@@ -23,7 +23,7 @@ sudo apt-get install libpapi-dev
 
 ![image-20201127113345948](./image-20201127113345948.png)
 
-那么很有可能是因为NUMA_NODES的设置问题，这是因为默认定义中，吧NUMA_NODES定义成了空，可以在`htlockepfl.h`中，修改这个定义，如下：
+那么很有可能是因为NUMA_NODES的设置问题，这是因为默认定义中，吧NUMA_NODES定义成了空，可以在`include/htlockepfl.h`中，修改这个定义，如下：
 
 ![image-20201121124415134](./image-20201121124415134-1606444591993.png)
 
