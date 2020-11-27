@@ -29,7 +29,21 @@ sudo apt-get install libpapi-dev
 
 #### gettid问题
 
-[gettid解决方法](./linux的坑)
+![Xnip2020-11-27_10-14-04](LITL复现第二题：安装userSpace锁程序.assets/Xnip2020-11-27_10-14-04.png)
+
+##### 	解决方法一：
+
+​		给LiTL的gittid函数重命名
+
+​		修改的地方：
+
+​			1.utils.h			
+
+![image-20201127103014213](LITL复现第二题：安装userSpace锁程序.assets/image-20201127103014213.png)
+
+修改之后：
+
+![image-20201127103254862](LITL复现第二题：安装userSpace锁程序.assets/image-20201127103254862.png)
 
 
 
