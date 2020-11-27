@@ -61,9 +61,7 @@ int main(int argc, char* argv[])
 	// init
 	pthread_t* threads = (pthread_t*)malloc(threadsNum*sizeof(pthread_t));
 
-
-
-    	srand((unsigned)time(NULL));
+	srand((unsigned)time(NULL));
 	int i;
 	for(i = 0; i < NUM; i++)
 	{
@@ -89,6 +87,71 @@ int main(int argc, char* argv[])
 	
 }
 ```
+
+上面的代码可能会内存占用较大，下面代码内存占用较小。
+
+```c++
+#include <stdio.h> 
+#include <pthread.h> 
+#include <unistd.h>  
+#define NUM 1000000 
+#define VISIT_TIMES 100000000  
+struct Item 
+{
+    char data[128];
+};
+int t = 50; 
+pthread_mutex_t locks[NUM];
+void *thread(struct Item *items) 
+{
+    int i;
+    for (i = 0; i < VISIT_TIMES; i++)
+    {         
+        int r = rand() % 100;
+        if (r < t)
+        {
+            pthread_mutex_lock(&locks[0]);
+            pthread_mutex_unlock(&locks[0]);  
+        }        
+        else
+        {
+            int cur = rand() %(NUM - 1) + 1;  
+            pthread_mutex_lock(&locks[cur]);   
+            pthread_mutex_unlock(&locks[cur]);  
+        }
+    }
+}
+int main(int argc, char *argv[]) {
+    t = atoi(argv[2]);
+    int threads_num = atoi(argv[1]);
+    //
+    struct Item items[NUM]; 	
+    struct Item *items=(struct Item *)malloc(NUM*sizeof(struct Item));
+    pthread_t *threads = (pthread_t *)malloc(threads_num * sizeof(pthread_t));
+    srand((unsigned)time(NULL));  
+    int i;    
+    for (i = 0; i < NUM; i++)     
+    {     
+        pthread_mutex_init(&locks[i], NULL);
+    }   
+    for (i = 0; i < threads_num; ++i) 
+    {
+        threads[i] = i + 1;    
+        pthread_create(&(threads[i]), NULL, thread, items);
+    }
+    for (i = 0; i < threads_num; ++i)
+    {
+        pthread_join(threads[i], NULL);   
+    } 
+    while (wait(NULL) != -1)  
+    {
+        sleep(100); 
+    } 
+    return 0;
+}
+```
+
+
 
 ### 代码解释
 
