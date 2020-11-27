@@ -29,6 +29,8 @@ sudo apt-get install libpapi-dev
 
 #### gettid问题
 
+[gettid解决方法](./linux的坑)
+
 
 
 ### 测试部分
