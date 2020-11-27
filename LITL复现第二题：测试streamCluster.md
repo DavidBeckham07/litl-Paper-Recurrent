@@ -23,13 +23,21 @@ source env.sh
 parsecmgmt -a build -p streamcluster
 ```
 
+![image-20201127133601590](LITL复现第二题：测试streamCluster.assets/image-20201127133601590.png)
+
+
+
 ### 使用streamcluster测试锁
 
 将`parsec/run.sh`复制到`parsec/parsec-3.0`下。
 
 ![image-20201124232414386](./image-20201124232414386.png)
 
-修改`run.sh`中这个`LOCK_DIR`的值，必须是litl文件夹相对于当前run.sh的位置。这里，我们需要改成：
+修改`run.sh`中这个`LOCK_DIR`的值，必须是litl文件夹相对于当前run.sh的位置。这里我们的当前文件夹为
+
+![image-20201127133921554](LITL复现第二题：测试streamCluster.assets/image-20201127133921554.png)
+
+所以，我们需要改成：
 
 ```shell
 LOCK_DIR=./../../../ulocks/src/litl
