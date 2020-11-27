@@ -28,7 +28,6 @@ sudo apt-get install libpapi-dev
 ![image-20201121124415134](./image-20201121124415134-1606444591993.png)
 
 #### gettid问题
-
 ![Xnip2020-11-27_10-14-04](LITL复现第二题：安装userSpace锁程序.assets/Xnip2020-11-27_10-14-04.png)
 
 ##### 	解决方法一：
@@ -44,6 +43,9 @@ sudo apt-get install libpapi-dev
 修改之后：
 
 ![image-20201127103254862](LITL复现第二题：安装userSpace锁程序.assets/image-20201127103254862.png)
+=======
+
+
 
 
 
