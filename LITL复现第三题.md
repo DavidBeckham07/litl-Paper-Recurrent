@@ -2,7 +2,7 @@
 
 > 作业4：
 > \1. 阅读pdf文件，找到其中你觉得在测试效率结果上最有特色的三种锁方法，根据这三种方法的参考文献并看他们与mutex的不同
-> \2. 对应1中的锁方法的源码（![img](file:///C:\Users\11834\AppData\Roaming\Tencent\TIM\Temp\%W@GJ$ACOF(TYDYECOKVDYB.png)https://github.com/sslab-gatech/shfllock），根据论文中的数据集（自行查找）运行代码重现1中你觉得“特色”的结果
+> \2. 对应1中的锁方法的源码，根据论文中的数据集（自行查找）运行代码重现1中你觉得“特色”的结果
 > \3. 写一个竞争程度可以调整的互斥程序，要求基于一定数量的线程通过上述三种锁完成互斥访问，具体要求通过设定不同线程数量（第一个参数）
 >   a. 每个线程必须上锁去访问一组数组的元素，数据元素100万个自定义结构体，128字节对齐
 >   b. 每个线程在100万个元素上访问100000000次，以一定概率t（程序第二参数）对0号元素访问，以1-t的概率随机访问其他999,999个元素
@@ -124,8 +124,7 @@ void *thread(struct Item *items)
 int main(int argc, char *argv[]) {
     t = atoi(argv[2]);
     int threads_num = atoi(argv[1]);
-    //
-    struct Item items[NUM]; 	
+    // struct Item items[NUM]; 	
     struct Item *items=(struct Item *)malloc(NUM*sizeof(struct Item));
     pthread_t *threads = (pthread_t *)malloc(threads_num * sizeof(pthread_t));
     srand((unsigned)time(NULL));  
